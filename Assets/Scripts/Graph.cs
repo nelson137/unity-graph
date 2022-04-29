@@ -46,7 +46,7 @@ public class Graph : MonoBehaviour
             var p = Instantiate(pointPrefab);
             p.localScale = scale;
             pointPos.x = (i + 0.5f) * step - 1f;
-            pointPos.y = pointPos.x * pointPos.x;
+            pointPos.y = pointPos.x * pointPos.x * pointPos.x;
             p.localPosition = pointPos;
             p.SetParent(transform);
         }
