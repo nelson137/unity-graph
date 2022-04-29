@@ -17,6 +17,8 @@ public class Graph : MonoBehaviour
     [SerializeField]
     Transform lineHorizontalPrefab, lineVerticalPrefab;
 
+    Transform[] points;
+
     private void Awake()
     {
         // Create grid
@@ -38,17 +40,29 @@ public class Graph : MonoBehaviour
         }
 
         // Create points
+        points = new Transform[resolution];
         var step = 2f / resolution;
         var scale = Vector3.one * step;
         var pointPos = new Vector3(1, 1);
         for (int i = 0; i < resolution; i++)
         {
-            var p = Instantiate(pointPrefab);
+            var p = points[i] = Instantiate(pointPrefab);
             p.localScale = scale;
             pointPos.x = (i + 0.5f) * step - 1f;
-            pointPos.y = pointPos.x * pointPos.x * pointPos.x;
             p.localPosition = pointPos;
             p.SetParent(transform);
+        }
+    }
+
+    private void Update()
+    {
+        var t = Time.time;
+        for (int i = 0; i < points.Length; i++)
+        {
+            var p = points[i];
+            var pos = p.localPosition;
+            pos.y = Mathf.Sin(Mathf.PI * (pos.x + t));
+            p.localPosition = pos;
         }
     }
 }
