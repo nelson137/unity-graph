@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static FunctionLibrary;
 
 //[ExecuteInEditMode]
 public class Graph : MonoBehaviour
 {
     [SerializeField, Range(10, 100)]
     int resolution = 10;
+
+    [SerializeField]
+    FunctionName function;
 
     [SerializeField]
     Transform grid;
@@ -57,11 +61,12 @@ public class Graph : MonoBehaviour
     private void Update()
     {
         var t = Time.time;
+        Function f = GetFunction(function);
         for (int i = 0; i < points.Length; i++)
         {
             var p = points[i];
             var pos = p.localPosition;
-            pos.y = Mathf.Sin(Mathf.PI * (pos.x + t));
+            pos.y = f(pos.x, t);
             p.localPosition = pos;
         }
     }
