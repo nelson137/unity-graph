@@ -18,31 +18,10 @@ public class Graph : MonoBehaviour
     [SerializeField]
     Transform pointPrefab;
 
-    [SerializeField]
-    Transform lineHorizontalPrefab, lineVerticalPrefab;
-
     Transform[] points;
 
     private void Awake()
     {
-        // Create grid
-        Vector3 pos;
-        for (int i = -10; i <= 10; i++)
-        {
-            // Create horizontal line with y=i
-            var h = Instantiate(lineHorizontalPrefab);
-            pos = h.localPosition;
-            pos.y = i;
-            h.localPosition = pos;
-            h.SetParent(grid);
-            // Create vertical line with x=i
-            var v = Instantiate(lineVerticalPrefab);
-            pos = v.localPosition;
-            pos.x = i;
-            v.localPosition = pos;
-            v.SetParent(grid);
-        }
-
         // Create points
         points = new Transform[resolution * resolution];
         var step = 2f / resolution;

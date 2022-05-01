@@ -409,8 +409,6 @@ MonoBehaviour:
   function: 0
   grid: {fileID: 270920746}
   pointPrefab: {fileID: 7989276179465298703, guid: 6312e1177952a834181e23e4d8937294, type: 3}
-  lineHorizontalPrefab: {fileID: 3671818356221607725, guid: 375831d5af338304ea166716d6939cc9, type: 3}
-  lineVerticalPrefab: {fileID: 8003163676780417935, guid: bc20fd726a6a75040bbee6ef9594cea3, type: 3}
 --- !u!4 &1401727276
 Transform:
   m_ObjectHideFlags: 0
