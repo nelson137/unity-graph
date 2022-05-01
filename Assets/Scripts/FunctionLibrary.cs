@@ -6,8 +6,8 @@ public static class FunctionLibrary
     public delegate Vector3 Function(float u, float v, float t);
 
     [SerializeField]
-    public enum FunctionName { SineWave, MultiSineWave, Ripple, Sphere };
-    static Function[] functions = { SineWave, MultiSineWave, Ripple, Sphere };
+    public enum FunctionName { SineWave, MultiSineWave, Ripple, Sphere, BandedSphere };
+    static Function[] functions = { SineWave, MultiSineWave, Ripple, Sphere, BandedSphere };
 
     public static Function GetFunction(FunctionName name)
     {
@@ -49,6 +49,17 @@ public static class FunctionLibrary
     {
         Vector3 p;
         var r = 0.5f + 0.5f * Sin(PI * t);
+        var s = r * Cos(0.5f * PI * v);
+        p.x = s * Sin(PI * u);
+        p.y = r * Sin(0.5f * PI * v);
+        p.z = s * Cos(PI * u);
+        return p;
+    }
+
+    public static Vector3 BandedSphere(float u, float v, float t)
+    {
+        Vector3 p;
+        var r = 0.9f + 0.1f * Sin(PI * (6f*u + 4f*v + t));
         var s = r * Cos(0.5f * PI * v);
         p.x = s * Sin(PI * u);
         p.y = r * Sin(0.5f * PI * v);
