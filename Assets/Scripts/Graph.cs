@@ -26,19 +26,10 @@ public class Graph : MonoBehaviour
         points = new Transform[resolution * resolution];
         var step = 2f / resolution;
         var scale = Vector3.one * step;
-        var pointPos = new Vector3(1, 1);
-        for (int i = 0, x = 0, z = 0; i < points.Length; i++, x++)
+        for (int i = 0; i < points.Length; i++)
         {
-            if (x == resolution)
-            {
-                x = 0;
-                z++;
-            }
             var p = points[i] = Instantiate(pointPrefab);
             p.localScale = scale;
-            pointPos.x = (x + 0.5f) * step - 1f;
-            pointPos.z = (z + 0.5f) * step - 1f;
-            p.localPosition = pointPos;
             p.SetParent(transform);
         }
     }
@@ -46,13 +37,19 @@ public class Graph : MonoBehaviour
     private void Update()
     {
         var t = Time.time;
+        var step = 2f / resolution;
         Function f = GetFunction(function);
-        for (int i = 0; i < points.Length; i++)
+        var v = 0.5f * step - 1f;
+        for (int i = 0, x = 0, z = 0; i < points.Length; i++, x++)
         {
-            var p = points[i];
-            var pos = p.localPosition;
-            pos.y = f(pos.x, pos.z, t);
-            p.localPosition = pos;
+            if (x == resolution)
+            {
+                x = 0;
+                z++;
+                v = (z + 0.5f) * step - 1f;
+            }
+            var u = (x + 0.5f) * step - 1f;
+            points[i].localPosition = f(u, v, t);
         }
     }
 }

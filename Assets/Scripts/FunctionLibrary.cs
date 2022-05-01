@@ -3,33 +3,56 @@ using static UnityEngine.Mathf;
 
 public static class FunctionLibrary
 {
-    public delegate float Function(float x, float z, float t);
+    public delegate Vector3 Function(float u, float v, float t);
 
     [SerializeField]
-    public enum FunctionName { SineWave, MultiSineWave, Ripple };
-    static Function[] functions = { SineWave, MultiSineWave, Ripple };
+    public enum FunctionName { SineWave, MultiSineWave, Ripple, Sphere };
+    static Function[] functions = { SineWave, MultiSineWave, Ripple, Sphere };
 
     public static Function GetFunction(FunctionName name)
     {
         return functions[(int) name];
     }
 
-    public static float SineWave(float x, float z, float t)
+    public static Vector3 SineWave(float u, float v, float t)
     {
-        return Sin(PI * (x + z + t));
+        Vector3 p;
+        p.x = u;
+        p.y = Sin(PI * (u + v + t));
+        p.z = v;
+        return p;
     }
 
-    public static float MultiSineWave(float x, float z, float t)
+    public static Vector3 MultiSineWave(float u, float v, float t)
     {
-        float y = Sin(PI * (x + 0.5f * t));
-        y += 0.5f * Sin(2 * PI * (z + t));
-        y += Sin(PI * (x + z + 0.25f * t));
-        return y * (1f / 2f);
+        Vector3 p;
+        p.x = u;
+        p.y = Sin(PI * (u + 0.5f * t));
+        p.y += 0.5f * Sin(2 * PI * (v + t));
+        p.y += Sin(PI * (u + v + 0.25f * t));
+        p.y *= (1f / 2.5f);
+        p.z = v;
+        return p;
     }
 
-    public static float Ripple(float x, float z, float t)
+    public static Vector3 Ripple(float u, float v, float t)
     {
-        float d = Sqrt(x * x + z * z);
-        return Sin(PI * (4f * d - t)) / (2f + 10 * d);
+        float d = Sqrt(u * u + v * v);
+        Vector3 p;
+        p.x = u;
+        p.y = Sin(PI * (4f * d - t)) / (2f + 10 * d);
+        p.z = v;
+        return p;
+    }
+
+    public static Vector3 Sphere(float u, float v, float t)
+    {
+        Vector3 p;
+        var r = 0.5f + 0.5f * Sin(PI * t);
+        var s = r * Cos(0.5f * PI * v);
+        p.x = s * Sin(PI * u);
+        p.y = r * Sin(0.5f * PI * v);
+        p.z = s * Cos(PI * u);
+        return p;
     }
 }
