@@ -15,16 +15,16 @@ public class CameraMotion : MonoBehaviour
 
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            transform.RotateAround(target, axis, -0.5f);
+            transform.RotateAround(target, axis, -10f);
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            transform.RotateAround(target, axis, 0.5f);
+            transform.RotateAround(target, axis, 10f);
         }
 
         if (Input.GetMouseButton(0))
         {
-            var angle = 300f * Time.deltaTime * Input.GetAxis("Mouse X");
+            float angle = 300f * Time.deltaTime * Input.GetAxis("Mouse X");
             transform.RotateAround(target, axis, angle);
         }
     }
