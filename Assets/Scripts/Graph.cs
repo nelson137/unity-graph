@@ -14,7 +14,7 @@ public class Graph : MonoBehaviour
 
     [SerializeField]
     Transform grid;
-    
+
     [SerializeField]
     Transform pointPrefab;
 

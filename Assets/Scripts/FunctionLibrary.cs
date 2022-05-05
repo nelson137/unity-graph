@@ -6,12 +6,29 @@ public static class FunctionLibrary
     public delegate Vector3 Function(float u, float v, float t);
 
     [SerializeField]
-    public enum FunctionName { SineWave, MultiSineWave, Ripple, Sphere, BandedSphere, BandedStarTorus };
-    static Function[] functions = { SineWave, MultiSineWave, Ripple, Sphere, BandedSphere, BandedStarTorus };
+    public enum FunctionName
+    {
+        SineWave,
+        MultiSineWave,
+        Ripple,
+        Sphere,
+        BandedSphere,
+        BandedStarTorus
+    };
+
+    static Function[] functions =
+    {
+        SineWave,
+        MultiSineWave,
+        Ripple,
+        Sphere,
+        BandedSphere,
+        BandedStarTorus
+    };
 
     public static Function GetFunction(FunctionName name)
     {
-        return functions[(int) name];
+        return functions[(int)name];
     }
 
     public static Vector3 SineWave(float u, float v, float t)
@@ -59,7 +76,7 @@ public static class FunctionLibrary
     public static Vector3 BandedSphere(float u, float v, float t)
     {
         Vector3 p;
-        var r = 0.9f + 0.1f * Sin(PI * (6f*u + 4f*v + t));
+        var r = 0.9f + 0.1f * Sin(PI * (6f * u + 4f * v + t));
         var s = r * Cos(0.5f * PI * v);
         p.x = s * Sin(PI * u);
         p.y = r * Sin(0.5f * PI * v);
@@ -70,8 +87,8 @@ public static class FunctionLibrary
     public static Vector3 BandedStarTorus(float u, float v, float t)
     {
         Vector3 p;
-        var r1 = 0.7f + 0.1f * Sin(PI * (6f*u + 0.5f*t));
-        var r2 = 0.15f + 0.05f * Sin(PI * (8f*u + 4f*v + 2f*t));
+        var r1 = 0.7f + 0.1f * Sin(PI * (6f * u + 0.5f * t));
+        var r2 = 0.15f + 0.05f * Sin(PI * (8f * u + 4f * v + 2f * t));
         var s = r1 + r2 * Cos(PI * v);
         p.x = s * Sin(PI * u);
         p.y = r2 * Sin(PI * v);
