@@ -6,7 +6,7 @@ using static FunctionLibrary;
 //[ExecuteInEditMode]
 public class Graph : MonoBehaviour
 {
-    [SerializeField, Range(10, 100)]
+    [SerializeField, Range(10, 1000)]
     int resolution = 10;
 
     [SerializeField]
