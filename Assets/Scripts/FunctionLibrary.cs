@@ -106,6 +106,9 @@ public static class FunctionLibrary
     /// <summary>
     /// Port of <c>class ClassicNoise</c> from Stefan Gustavson's Java implementation
     /// (<a href="https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf">link</a>, p. 8).
+    /// <br />
+    /// TODO: Investigate <a href="https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/perlin-noise-part-2/perlin-noise-terrain-mesh">this c++ implementation</a>
+    /// of Perlin Noise.
     /// </summary>
     public static Vector3 SimplexNoise(float u, float v, float t)
     {
