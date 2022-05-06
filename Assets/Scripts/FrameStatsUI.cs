@@ -1,19 +1,19 @@
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// The metric to display in the frame statistics panel.
+/// </summary>
+public enum DisplayMetric
+{
+    FrameRate,
+    FrameDuration
+};
+
 public class FrameStatsUI : MonoBehaviour
 {
     [SerializeField]
     TextMeshProUGUI textObject;
-
-    /// <summary>
-    /// The metric to display in the frame statistics panel.
-    /// </summary>
-    public enum DisplayMetric
-    {
-        FrameRate,
-        FrameDuration
-    };
 
     /// <summary>
     ///
@@ -47,6 +47,64 @@ public class FrameStatsUI : MonoBehaviour
     /// </summary>
     int count = 0;
 
+    /// <summary>
+    /// Zero out all stats for the next sample duration.
+    /// </summary>
+    void ResetStats()
+    {
+        duration = 0f;
+        count = 0;
+        bestDuration = float.MaxValue;
+        worstDuration = float.MinValue;
+    }
+
+    /// <summary>
+    /// Cycle to the next metric. This will zero out the stats and restart the period.
+    /// </summary>
+    public void NextMetric()
+    {
+        switch (displayMetric)
+        {
+            case DisplayMetric.FrameRate:
+                displayMetric = DisplayMetric.FrameDuration;
+                SetText(0f, 0f, 0f);
+                break;
+            case DisplayMetric.FrameDuration:
+                displayMetric = DisplayMetric.FrameRate;
+                SetText(float.MaxValue, float.MaxValue, float.MaxValue);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Set the text with the correct format according to the current display metric.
+    /// </summary>
+    void SetText(float bestDur, float avgDur, float worstDur)
+    {
+        switch (displayMetric)
+        {
+            case DisplayMetric.FrameRate:
+                textObject.SetText(
+                    "FPS\n{0:0}\n{1:0}\n{2:0}",
+                    1f / bestDur,
+                    1f / avgDur,
+                    1f / worstDur
+                );
+                break;
+            case DisplayMetric.FrameDuration:
+                textObject.SetText(
+                    "MS\n{0:1}\n{1:1}\n{2:1}",
+                    1000f * bestDur,
+                    1000f * avgDur,
+                    1000f * worstDur
+                );
+                break;
+            default:
+                textObject.SetText("N/A\n0\n0\n0");
+                break;
+        }
+    }
+
     void Update()
     {
         float currentDuration = Time.unscaledDeltaTime;
@@ -56,35 +114,9 @@ public class FrameStatsUI : MonoBehaviour
         bestDuration = Mathf.Min(bestDuration, currentDuration);
         if (duration >= sampleDuration)
         {
-            UpdateText();
-            duration = 0f;
-            count = 0;
-            bestDuration = float.MaxValue;
-            worstDuration = float.MinValue;
-        }
-    }
-
-    void UpdateText()
-    {
-        float avgDuration = duration / count;
-        switch (displayMetric)
-        {
-            case DisplayMetric.FrameRate:
-                textObject.SetText(
-                    "FPS\n{0:0}\n{1:0}\n{2:0}",
-                    1f / bestDuration,
-                    1f / avgDuration,
-                    1f / worstDuration
-                );
-                break;
-            case DisplayMetric.FrameDuration:
-                textObject.SetText(
-                    "MS\n{0:1}\n{1:1}\n{2:1}",
-                    1000f * bestDuration,
-                    1000f * avgDuration,
-                    1000f * worstDuration
-                );
-                break;
+            float avgDuration = duration / count;
+            SetText(bestDuration, avgDuration, worstDuration);
+            ResetStats();
         }
     }
 }
