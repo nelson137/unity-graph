@@ -12,6 +12,9 @@ public class Graph : MonoBehaviour
     [SerializeField]
     FunctionName function;
 
+    [SerializeField, Min(0f)]
+    float smoothTransitionDuration = 1f;
+
     [SerializeField]
     Transform grid;
 
@@ -19,6 +22,10 @@ public class Graph : MonoBehaviour
     Transform pointPrefab;
 
     Transform[] points;
+
+    bool isTransitioning = false;
+    float duration = 0f;
+    FunctionName fromFunc;
 
     public FunctionName GetCurrentFunctionName()
     {
@@ -41,6 +48,18 @@ public class Graph : MonoBehaviour
 
     private void Update()
     {
+        if (isTransitioning)
+        {
+            UpdateSmoothTransition();
+        }
+        else
+        {
+            UpdateFunction();
+        }
+    }
+
+    private void UpdateFunction()
+    {
         var t = Time.time;
         var step = 2f / resolution;
         Function f = GetFunction(function);
@@ -58,8 +77,38 @@ public class Graph : MonoBehaviour
         }
     }
 
+    private void UpdateSmoothTransition()
+    {
+        Function from = GetFunction(fromFunc),
+            to = GetFunction(function);
+        duration += Time.deltaTime;
+        float progress = duration / smoothTransitionDuration;
+        float t = Time.time;
+        float step = 2f / resolution;
+        float v = 0.5f * step - 1f;
+        for (int i = 0, x = 0, z = 0; i < points.Length; i++, x++)
+        {
+            if (x == resolution)
+            {
+                x = 0;
+                z++;
+                v = (z + 0.5f) * step - 1f;
+            }
+            var u = (x + 0.5f) * step - 1f;
+            points[i].localPosition = SmoothTransition(u, v, t, from, to, progress);
+        }
+
+        if (progress >= 1.0)
+        {
+            isTransitioning = false;
+        }
+    }
+
     public void SmoothTransitionTo(FunctionName toFunc)
     {
+        isTransitioning = true;
+        duration = 0f;
+        fromFunc = function;
         function = toFunc;
     }
 }

@@ -1781,6 +1781,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resolution: 100
   function: 5
+  smoothTransitionDuration: 1
   grid: {fileID: 270920746}
   pointPrefab: {fileID: 7989276179465298703, guid: 6312e1177952a834181e23e4d8937294, type: 3}
 --- !u!4 &1401727276
