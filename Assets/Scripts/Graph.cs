@@ -20,6 +20,11 @@ public class Graph : MonoBehaviour
 
     Transform[] points;
 
+    public FunctionName GetCurrentFunctionName()
+    {
+        return function;
+    }
+
     private void Awake()
     {
         // Create points
@@ -51,5 +56,10 @@ public class Graph : MonoBehaviour
             var u = (x + 0.5f) * step - 1f;
             points[i].localPosition = f(u, v, t);
         }
+    }
+
+    public void SmoothTransitionTo(FunctionName toFunc)
+    {
+        function = toFunc;
     }
 }
