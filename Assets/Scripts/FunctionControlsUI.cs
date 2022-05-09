@@ -7,7 +7,7 @@ using static FunctionLibrary;
 public class FunctionControlsUI : MonoBehaviour
 {
     [SerializeField]
-    Graph graph;
+    GpuGraph graph;
 
     [SerializeField]
     TMP_Dropdown dropdown;
