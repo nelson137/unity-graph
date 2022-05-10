@@ -17,9 +17,9 @@ public class GpuGraph : MonoBehaviour
     [SerializeField]
     Mesh mesh;
 
-    //const int maxResolution = 1000;
+    const int maxResolution = 1000;
 
-    [SerializeField, Range(10, 1000)]
+    [SerializeField, Range(10, maxResolution)]
     int resolution = 10;
 
     [SerializeField]
@@ -41,7 +41,7 @@ public class GpuGraph : MonoBehaviour
 
     void OnEnable()
     {
-        positionsBuffer = new ComputeBuffer(resolution * resolution, 3 * sizeof(float));
+        positionsBuffer = new ComputeBuffer(maxResolution * maxResolution, 3 * sizeof(float));
     }
 
     void OnDisable()
@@ -67,7 +67,7 @@ public class GpuGraph : MonoBehaviour
         material.SetFloat(stepId, step);
         // Draw mesh
         var bounds = new Bounds(Vector3.zero, Vector3.one * (2f + 2f / resolution));
-        Graphics.DrawMeshInstancedProcedural(mesh, 0, material, bounds, positionsBuffer.count);
+        Graphics.DrawMeshInstancedProcedural(mesh, 0, material, bounds, resolution * resolution);
     }
 
     public void SmoothTransitionTo(FunctionName toFunc)
