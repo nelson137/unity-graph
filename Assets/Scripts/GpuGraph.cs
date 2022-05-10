@@ -7,6 +7,7 @@ public class GpuGraph : MonoBehaviour
     static readonly int positionsId = Shader.PropertyToID("_Positions");
     static readonly int stepId = Shader.PropertyToID("_Step");
     static readonly int timeId = Shader.PropertyToID("_Time");
+    static readonly int transitionProgressId = Shader.PropertyToID("_TransitionProgress");
 
     [SerializeField]
     ComputeShader computeShader;
@@ -25,14 +26,14 @@ public class GpuGraph : MonoBehaviour
     [SerializeField]
     FunctionName function;
 
-    //[SerializeField, Min(0f)]
-    //float smoothTransitionDuration = 1f;
+    [SerializeField, Min(0f)]
+    float smoothTransitionDuration = 1f;
 
     ComputeBuffer positionsBuffer;
 
-    //bool isTransitioning;
-    //float duration;
-    //FunctionName fromFunc;
+    bool isTransitioning;
+    float duration;
+    FunctionName fromFunc;
 
     public FunctionName GetCurrentFunctionName()
     {
@@ -53,18 +54,32 @@ public class GpuGraph : MonoBehaviour
     void Update()
     {
         float step = 2f / resolution;
-        var kernelIndex = (int)function;
+        if (isTransitioning)
+        {
+            duration += Time.deltaTime;
+            float progress = Mathf.SmoothStep(0f, 1f, duration / smoothTransitionDuration);
+            computeShader.SetFloat(transitionProgressId, progress);
+            if (progress >= 1.0f)
+            {
+                isTransitioning = false;
+            }
+        }
+        var kernelIndex = 7 * (int)(isTransitioning ? fromFunc : function) + (int)function;
+
         // Update compute shader values
         computeShader.SetInt(resolutionId, resolution);
         computeShader.SetFloat(stepId, step);
         computeShader.SetFloat(timeId, Time.time);
         computeShader.SetBuffer(kernelIndex, positionsId, positionsBuffer);
+
         // Run kernel
         int groups = Mathf.CeilToInt(resolution / 8f);
         computeShader.Dispatch(kernelIndex, groups, groups, 1);
+
         // Update material values
         material.SetBuffer(positionsId, positionsBuffer);
         material.SetFloat(stepId, step);
+
         // Draw mesh
         var bounds = new Bounds(Vector3.zero, Vector3.one * (2f + 2f / resolution));
         Graphics.DrawMeshInstancedProcedural(mesh, 0, material, bounds, resolution * resolution);
@@ -72,9 +87,9 @@ public class GpuGraph : MonoBehaviour
 
     public void SmoothTransitionTo(FunctionName toFunc)
     {
-        //isTransitioning = true;
-        //duration = 0f;
-        //fromFunc = function;
+        isTransitioning = true;
+        duration = 0f;
+        fromFunc = function;
         function = toFunc;
     }
 }

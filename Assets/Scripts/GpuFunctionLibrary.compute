@@ -4,7 +4,7 @@ uint _Resolution;
 
 RWStructuredBuffer<float3> _Positions;
 
-float _Step, _Time;
+float _Step, _Time, _TransitionProgress;
 
 /*************************************************
  * Utilities
@@ -203,11 +203,59 @@ float3 BandedStarTorus(float u, float v, float t)
  ************************************************/
 
 #pragma kernel Kernel_SineWave
+#pragma kernel Kernel_SineWave_To_MultiSineWave
+#pragma kernel Kernel_SineWave_To_SimplexNoise
+#pragma kernel Kernel_SineWave_To_Ripple
+#pragma kernel Kernel_SineWave_To_Sphere
+#pragma kernel Kernel_SineWave_To_BandedSphere
+#pragma kernel Kernel_SineWave_To_BandedStarTorus
+
+#pragma kernel Kernel_MultiSineWave_To_SineWave
 #pragma kernel Kernel_MultiSineWave
+#pragma kernel Kernel_MultiSineWave_To_SimplexNoise
+#pragma kernel Kernel_MultiSineWave_To_Ripple
+#pragma kernel Kernel_MultiSineWave_To_Sphere
+#pragma kernel Kernel_MultiSineWave_To_BandedSphere
+#pragma kernel Kernel_MultiSineWave_To_BandedStarTorus
+
+#pragma kernel Kernel_SimplexNoise_To_SineWave
+#pragma kernel Kernel_SimplexNoise_To_MultiSineWave
 #pragma kernel Kernel_SimplexNoise
+#pragma kernel Kernel_SimplexNoise_To_Ripple
+#pragma kernel Kernel_SimplexNoise_To_Sphere
+#pragma kernel Kernel_SimplexNoise_To_BandedSphere
+#pragma kernel Kernel_SimplexNoise_To_BandedStarTorus
+
+#pragma kernel Kernel_Ripple_To_SineWave
+#pragma kernel Kernel_Ripple_To_MultiSineWave
+#pragma kernel Kernel_Ripple_To_SimplexNoise
 #pragma kernel Kernel_Ripple
+#pragma kernel Kernel_Ripple_To_Sphere
+#pragma kernel Kernel_Ripple_To_BandedSphere
+#pragma kernel Kernel_Ripple_To_BandedStarTorus
+
+#pragma kernel Kernel_Sphere_To_SineWave
+#pragma kernel Kernel_Sphere_To_MultiSineWave
+#pragma kernel Kernel_Sphere_To_SimplexNoise
+#pragma kernel Kernel_Sphere_To_Ripple
 #pragma kernel Kernel_Sphere
+#pragma kernel Kernel_Sphere_To_BandedSphere
+#pragma kernel Kernel_Sphere_To_BandedStarTorus
+
+#pragma kernel Kernel_BandedSphere_To_SineWave
+#pragma kernel Kernel_BandedSphere_To_MultiSineWave
+#pragma kernel Kernel_BandedSphere_To_SimplexNoise
+#pragma kernel Kernel_BandedSphere_To_Ripple
+#pragma kernel Kernel_BandedSphere_To_Sphere
 #pragma kernel Kernel_BandedSphere
+#pragma kernel Kernel_BandedSphere_To_BandedStarTorus
+
+#pragma kernel Kernel_BandedStarTorus_To_SineWave
+#pragma kernel Kernel_BandedStarTorus_To_MultiSineWave
+#pragma kernel Kernel_BandedStarTorus_To_SimplexNoise
+#pragma kernel Kernel_BandedStarTorus_To_Ripple
+#pragma kernel Kernel_BandedStarTorus_To_Sphere
+#pragma kernel Kernel_BandedStarTorus_To_BandedSphere
 #pragma kernel Kernel_BandedStarTorus
 
 #define KERNEL(func) \
@@ -218,6 +266,16 @@ float3 BandedStarTorus(float u, float v, float t)
         SetPosition(id, func(uv.x, uv.y, _Time)); \
     }
 
+#define KERNEL_A2B(funcA, funcB) \
+    [numthreads(8, 8, 1)] \
+    void Kernel_##funcA##_To_##funcB(uint3 id : SV_DispatchThreadID) \
+    { \
+        float2 uv = GetUV(id); \
+        float3 posA = funcA(uv.x, uv.y, _Time); \
+        float3 posB = funcB(uv.x, uv.y, _Time); \
+        SetPosition(id, lerp(posA, posB, _TransitionProgress)); \
+    }
+
 KERNEL(SineWave)
 KERNEL(MultiSineWave)
 KERNEL(SimplexNoise)
@@ -225,3 +283,52 @@ KERNEL(Ripple)
 KERNEL(Sphere)
 KERNEL(BandedSphere)
 KERNEL(BandedStarTorus)
+
+KERNEL_A2B(SineWave, MultiSineWave)
+KERNEL_A2B(SineWave, SimplexNoise)
+KERNEL_A2B(SineWave, Ripple)
+KERNEL_A2B(SineWave, Sphere)
+KERNEL_A2B(SineWave, BandedSphere)
+KERNEL_A2B(SineWave, BandedStarTorus)
+
+KERNEL_A2B(MultiSineWave, SineWave)
+KERNEL_A2B(MultiSineWave, SimplexNoise)
+KERNEL_A2B(MultiSineWave, Ripple)
+KERNEL_A2B(MultiSineWave, Sphere)
+KERNEL_A2B(MultiSineWave, BandedSphere)
+KERNEL_A2B(MultiSineWave, BandedStarTorus)
+
+KERNEL_A2B(SimplexNoise, SineWave)
+KERNEL_A2B(SimplexNoise, MultiSineWave)
+KERNEL_A2B(SimplexNoise, Ripple)
+KERNEL_A2B(SimplexNoise, Sphere)
+KERNEL_A2B(SimplexNoise, BandedSphere)
+KERNEL_A2B(SimplexNoise, BandedStarTorus)
+
+KERNEL_A2B(Ripple, SineWave)
+KERNEL_A2B(Ripple, MultiSineWave)
+KERNEL_A2B(Ripple, SimplexNoise)
+KERNEL_A2B(Ripple, Sphere)
+KERNEL_A2B(Ripple, BandedSphere)
+KERNEL_A2B(Ripple, BandedStarTorus)
+
+KERNEL_A2B(Sphere, SineWave)
+KERNEL_A2B(Sphere, MultiSineWave)
+KERNEL_A2B(Sphere, SimplexNoise)
+KERNEL_A2B(Sphere, Ripple)
+KERNEL_A2B(Sphere, BandedSphere)
+KERNEL_A2B(Sphere, BandedStarTorus)
+
+KERNEL_A2B(BandedSphere, SineWave)
+KERNEL_A2B(BandedSphere, MultiSineWave)
+KERNEL_A2B(BandedSphere, SimplexNoise)
+KERNEL_A2B(BandedSphere, Ripple)
+KERNEL_A2B(BandedSphere, Sphere)
+KERNEL_A2B(BandedSphere, BandedStarTorus)
+
+KERNEL_A2B(BandedStarTorus, SineWave)
+KERNEL_A2B(BandedStarTorus, MultiSineWave)
+KERNEL_A2B(BandedStarTorus, SimplexNoise)
+KERNEL_A2B(BandedStarTorus, Ripple)
+KERNEL_A2B(BandedStarTorus, Sphere)
+KERNEL_A2B(BandedStarTorus, BandedSphere)
