@@ -30,7 +30,7 @@ public class Graph : MonoBehaviour
         return function;
     }
 
-    private void Awake()
+    void Awake()
     {
         // Create points
         points = new Transform[resolution * resolution];
@@ -44,7 +44,7 @@ public class Graph : MonoBehaviour
         }
     }
 
-    private void Update()
+    void Update()
     {
         if (isTransitioning)
         {
@@ -56,7 +56,7 @@ public class Graph : MonoBehaviour
         }
     }
 
-    private void UpdateFunction()
+    void UpdateFunction()
     {
         var t = Time.time;
         var step = 2f / resolution;
@@ -75,7 +75,7 @@ public class Graph : MonoBehaviour
         }
     }
 
-    private void UpdateSmoothTransition()
+    void UpdateSmoothTransition()
     {
         Function from = GetFunction(fromFunc),
             to = GetFunction(function);
