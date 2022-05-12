@@ -48,11 +48,6 @@ public class FunctionControlsUI : MonoBehaviour
     RectTransform functionPropertiesPanels;
 
     /// <summary>
-    /// A dummy variable to get the variants of this enum through reflection.
-    /// </summary>
-    FunctionName funcName;
-
-    /// <summary>
     /// The original size of <see cref="controlsPanel"/>. This is the base size of the panel without
     /// the divider or any function properties.
     /// </summary>
@@ -72,7 +67,7 @@ public class FunctionControlsUI : MonoBehaviour
         resolutionSlider.value = graph.Resolution;
         resolutionSlider.onValueChanged.AddListener(v => graph.Resolution = (int)v);
 
-        var funcNames = Enum.GetNames(funcName.GetType());
+        var funcNames = Enum.GetNames((new FunctionName()).GetType());
         var options = funcNames.Select(name => new TMP_Dropdown.OptionData(name)).ToList();
         functionDropdown.ClearOptions();
         functionDropdown.AddOptions(options);
