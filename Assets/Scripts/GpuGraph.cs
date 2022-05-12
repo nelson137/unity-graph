@@ -1,6 +1,9 @@
 using UnityEngine;
 using static FunctionLibrary;
 
+/// <summary>
+/// Orchestrate the graph and the compute shader implementation.
+/// </summary>
 public class GpuGraph : MonoBehaviour
 {
     static readonly int resolutionId = Shader.PropertyToID("_Resolution");
@@ -9,42 +12,91 @@ public class GpuGraph : MonoBehaviour
     static readonly int timeId = Shader.PropertyToID("_Time");
     static readonly int transitionProgressId = Shader.PropertyToID("_TransitionProgress");
 
+    /// <summary>
+    /// A handle to the compute shader.
+    /// </summary>
     [SerializeField]
     ComputeShader computeShader;
 
+    /// <summary>
+    /// A handle to the cube material.
+    /// </summary>
     [SerializeField]
     Material material;
 
+    /// <summary>
+    /// A handle to the cube mesh.
+    /// </summary>
     [SerializeField]
     Mesh mesh;
 
+    /// <summary>
+    /// The minimum resolution. This is the lower bound of the <see cref="FunctionControlsUI"/>
+    /// slider.
+    /// </summary>
     public const int minResolution = 10;
+
+    /// <summary>
+    /// The maximum resolution. This is the upper bound of the <see cref="FunctionControlsUI"/>
+    /// slider.
+    /// </summary>
     public const int maxResolution = 1000;
 
+    /// <summary>
+    /// The private field backing <see cref="Resolution"/>.
+    /// </summary>
     [SerializeField, Range(10, maxResolution)]
     int resolution = 10;
 
+    /// <summary>
+    /// The resolution of the graph. The number of points (or cubes) that make up the graph is this
+    /// number squared.
+    /// </summary>
     public int Resolution
     {
         get => resolution;
         set => resolution = value;
     }
 
+    /// <summary>
+    /// The private field backing <see cref="CurrentFunctionName"/>.
+    /// </summary>
     [SerializeField]
     FunctionName function;
 
+    /// <summary>
+    /// The currently displayed function.
+    /// </summary>
     public FunctionName CurrentFunctionName
     {
         get => function;
     }
 
+    /// <summary>
+    /// The duration in seconds of the smooth transition between functions.
+    /// </summary>
     [SerializeField, Min(0f)]
     float smoothTransitionDuration = 1f;
 
+    /// <summary>
+    /// A handle to the buffer that holds all point positions.
+    /// </summary>
     ComputeBuffer positionsBuffer;
 
+    /// <summary>
+    /// Whether the grpah is currently transitioning between functions, AKA in transition mode.
+    /// </summary>
     bool isTransitioning;
+
+    /// <summary>
+    /// The total duration so far of the function transition. This is only used when in transition
+    /// mode.
+    /// </summary>
     float duration;
+
+    /// <summary>
+    /// The function from which we are transitioning. This is only used when in transition mode.
+    /// </summary>
     FunctionName fromFunc;
 
     void OnEnable()
@@ -93,6 +145,16 @@ public class GpuGraph : MonoBehaviour
         Graphics.DrawMeshInstancedProcedural(mesh, 0, material, bounds, resolution * resolution);
     }
 
+    /// <summary>
+    /// Set to transition mode.
+    /// <br />
+    /// This will set set <see cref="fromFunc"/> to <see cref="function"/>
+    /// and set <see cref="function"/> to <paramref name="toFunc"/>. Then the transition will happen
+    /// from the previous function to the new current function. This is similar to the
+    /// <see href="https://aerotwist.com/blog/flip-your-animations/">FLIP animation method</see>
+    /// but more simple.
+    /// </summary>
+    /// <param name="toFunc">The function to which to transition.</param>
     public void SmoothTransitionTo(FunctionName toFunc)
     {
         isTransitioning = true;

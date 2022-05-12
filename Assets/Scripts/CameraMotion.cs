@@ -1,11 +1,13 @@
 using UnityEngine;
 
+/// <summary>
+/// Swivel the camera around the graph on user input.
+/// </summary>
 public class CameraMotion : MonoBehaviour
 {
     [SerializeField]
     Transform graph;
 
-    // Update is called once per frame
     void Update()
     {
         var target = graph.position;

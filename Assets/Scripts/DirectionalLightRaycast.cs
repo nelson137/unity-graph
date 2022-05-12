@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Draw a debug ray along the path of the directional light. Remember that the ray is only visible
+/// in-game when gizmos are on.
+/// </summary>
 [ExecuteInEditMode]
 public class DirectionalLightRaycast : MonoBehaviour
 {

@@ -6,17 +6,33 @@ using TMPro;
 /// </summary>
 public enum DisplayMetric
 {
+    /// <summary>
+    /// Show frame statistics as FPS.
+    /// </summary>
     FrameRate,
+
+    /// <summary>
+    /// Show frame statistics as duration in milliseconds.
+    /// </summary>
     FrameDuration
 };
 
+/// <summary>
+/// Show frame statistics on the canvas.
+/// </summary>
 public class FrameStatsUI : MonoBehaviour
 {
+    /// <summary>
+    /// The text object for displaying the frame statistics.
+    /// </summary>
     [SerializeField]
     TextMeshProUGUI textObject;
 
     /// <summary>
-    ///
+    /// The current metric used to display the frame statistics.
+    /// <br />
+    /// See <seealso cref="DisplayMetric"/>
+    /// for possible values.
     /// </summary>
     [SerializeField]
     DisplayMetric displayMetric;
@@ -79,6 +95,9 @@ public class FrameStatsUI : MonoBehaviour
     /// <summary>
     /// Set the text with the correct format according to the current display metric.
     /// </summary>
+    /// <param name="bestDur">The best (lowest) duration of the current sample period.</param>
+    /// <param name="avgDur">The average duration of the current sample period.</param>
+    /// <param name="worstDur">The worst (highest) duration of the current sample period.</param>
     void SetText(float bestDur, float avgDur, float worstDur)
     {
         switch (displayMetric)
@@ -107,11 +126,13 @@ public class FrameStatsUI : MonoBehaviour
 
     void Update()
     {
+        // Aggregate the frame stats.
         float currentDuration = Time.unscaledDeltaTime;
         duration += currentDuration;
         count += 1;
         worstDuration = Mathf.Max(worstDuration, currentDuration);
         bestDuration = Mathf.Min(bestDuration, currentDuration);
+        // If at the end of one sample duration, show the aggregated stats and reset.
         if (duration >= sampleDuration)
         {
             float avgDuration = duration / count;
