@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using static FunctionLibrary;
+using static GpuGraph;
 
 /// <summary>
 /// Show function controls on the canvas.

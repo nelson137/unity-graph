@@ -1,11 +1,21 @@
 using UnityEngine;
-using static FunctionLibrary;
 
 /// <summary>
 /// Orchestrate the graph and the compute shader implementation.
 /// </summary>
 public class GpuGraph : MonoBehaviour
 {
+    public enum FunctionName
+    {
+        SineWave,
+        MultiSineWave,
+        SimplexNoise,
+        Ripple,
+        Sphere,
+        BandedSphere,
+        BandedStarTorus
+    };
+
     static readonly int resolutionId = Shader.PropertyToID("_Resolution");
     static readonly int positionsId = Shader.PropertyToID("_Positions");
     static readonly int stepId = Shader.PropertyToID("_Step");
