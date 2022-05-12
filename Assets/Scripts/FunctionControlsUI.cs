@@ -65,7 +65,7 @@ public class FunctionControlsUI : MonoBehaviour
         resolutionSlider.minValue = (float)GpuGraph.minResolution;
         resolutionSlider.maxValue = (float)GpuGraph.maxResolution;
         resolutionSlider.value = graph.Resolution;
-        resolutionSlider.onValueChanged.AddListener(v => graph.Resolution = (int)v);
+        resolutionSlider.onValueChanged.AddListener(value => OnChangeSlider(value));
 
         var funcNames = Enum.GetNames((new FunctionName()).GetType());
         var options = funcNames.Select(name => new TMP_Dropdown.OptionData(name)).ToList();
@@ -82,6 +82,28 @@ public class FunctionControlsUI : MonoBehaviour
 
         originalControlsPanelSize = controlsPanel.sizeDelta;
         UpdateFunctionControls(currentFunction);
+    }
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    /// <param name="value">TODO</param>
+    void OnChangeSlider(float value)
+    {
+        if (value < 100f)
+        {
+            value = Mathf.Round(value / 10f) * 10f;
+        }
+        else if (value < 1000f)
+        {
+            value = Mathf.Round(value / 50f) * 50f;
+        }
+        else
+        {
+            value = Mathf.Round(value / 100f) * 100f;
+        }
+        resolutionSlider.value = value;
+        graph.Resolution = (int)value;
     }
 
     /// <summary>
