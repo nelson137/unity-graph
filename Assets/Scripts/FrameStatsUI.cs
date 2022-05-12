@@ -64,18 +64,22 @@ public class FrameStatsUI : MonoBehaviour
     int count = 0;
 
     /// <summary>
-    /// Zero out all stats for the next sample duration.
+    /// The average duration of the current sample period.
     /// </summary>
-    void ResetStats()
-    {
-        duration = 0f;
-        count = 0;
-        bestDuration = float.MaxValue;
-        worstDuration = float.MinValue;
-    }
+    float sampleAverageDuration;
 
     /// <summary>
-    /// Cycle to the next metric. This will zero out the stats and restart the period.
+    /// The best (lowest) duration of the current sample period.
+    /// </summary>
+    float sampleBestDuration;
+
+    /// <summary>
+    /// The worst (highest) duration of the current sample period.
+    /// </summary>
+    float sampleWorstDuration;
+
+    /// <summary>
+    /// Switch to the next metric showing the same stats as currently shown.
     /// </summary>
     public void NextMetric()
     {
@@ -83,39 +87,35 @@ public class FrameStatsUI : MonoBehaviour
         {
             case DisplayMetric.FrameRate:
                 displayMetric = DisplayMetric.FrameDuration;
-                SetText(0f, 0f, 0f);
                 break;
             case DisplayMetric.FrameDuration:
                 displayMetric = DisplayMetric.FrameRate;
-                SetText(float.MaxValue, float.MaxValue, float.MaxValue);
                 break;
         }
+        SetText();
     }
 
     /// <summary>
     /// Set the text with the correct format according to the current display metric.
     /// </summary>
-    /// <param name="bestDur">The best (lowest) duration of the current sample period.</param>
-    /// <param name="avgDur">The average duration of the current sample period.</param>
-    /// <param name="worstDur">The worst (highest) duration of the current sample period.</param>
-    void SetText(float bestDur, float avgDur, float worstDur)
+    void SetText()
     {
         switch (displayMetric)
         {
             case DisplayMetric.FrameRate:
                 textObject.SetText(
                     "FPS\n{0:0}\n{1:0}\n{2:0}",
-                    1f / bestDur,
-                    1f / avgDur,
-                    1f / worstDur
+                    1f / sampleBestDuration,
+                    1f / sampleAverageDuration,
+                    1f / sampleWorstDuration
                 );
                 break;
             case DisplayMetric.FrameDuration:
                 textObject.SetText(
                     "MS\n{0:1}\n{1:1}\n{2:1}",
-                    1000f * bestDur,
-                    1000f * avgDur,
-                    1000f * worstDur
+                    1000f * sampleBestDuration,
+                    1000f * sampleAverageDuration,
+                    1000f * sampleWorstDuration
                 );
                 break;
             default:
@@ -135,9 +135,19 @@ public class FrameStatsUI : MonoBehaviour
         // If at the end of one sample duration, show the aggregated stats and reset.
         if (duration >= sampleDuration)
         {
-            float avgDuration = duration / count;
-            SetText(bestDuration, avgDuration, worstDuration);
-            ResetStats();
+            // Cache stats from sample
+            sampleAverageDuration = duration / count;
+            sampleBestDuration = bestDuration;
+            sampleWorstDuration = worstDuration;
+
+            // Update text
+            SetText();
+
+            // Reset aggregation variables
+            duration = 0f;
+            count = 0;
+            bestDuration = float.MaxValue;
+            worstDuration = float.MinValue;
         }
     }
 }
