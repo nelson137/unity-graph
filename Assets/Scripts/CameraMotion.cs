@@ -5,27 +5,48 @@ using UnityEngine;
 /// </summary>
 public class CameraMotion : MonoBehaviour
 {
+    /// <summary>
+    /// The graph around which to swivel.
+    /// </summary>
     [SerializeField]
     Transform graph;
 
     void Update()
     {
-        var target = graph.position;
-        var axis = Vector3.up;
+        const float mouseAngleFactor = 400f;
+        Vector3 target = graph.position;
+        bool isMouseDown = Input.GetMouseButton(0);
 
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        // Swivel left/right.
+        Vector3 axisLR = Vector3.up;
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
-            transform.RotateAround(target, axis, -10f);
+            transform.RotateAround(target, axisLR, 0.5f);
         }
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
-            transform.RotateAround(target, axis, 10f);
+            transform.RotateAround(target, axisLR, -0.5f);
+        }
+        if (isMouseDown)
+        {
+            float angle = mouseAngleFactor * Time.deltaTime * Input.GetAxis("Mouse X");
+            transform.RotateAround(target, axisLR, angle);
         }
 
-        if (Input.GetMouseButton(0))
+        // Swivel up/down.
+        Vector3 axisUD = transform.TransformDirection(Vector3.left);
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
         {
-            float angle = 300f * Time.deltaTime * Input.GetAxis("Mouse X");
-            transform.RotateAround(target, axis, angle);
+            transform.RotateAround(target, axisUD, 0.5f);
+        }
+        if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
+        {
+            transform.RotateAround(target, axisUD, -0.5f);
+        }
+        if (isMouseDown)
+        {
+            float angle = mouseAngleFactor * Time.deltaTime * Input.GetAxis("Mouse Y");
+            transform.RotateAround(target, axisUD, angle);
         }
     }
 }
