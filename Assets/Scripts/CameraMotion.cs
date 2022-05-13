@@ -11,11 +11,38 @@ public class CameraMotion : MonoBehaviour
     [SerializeField]
     Transform graph;
 
+    [SerializeField]
+    RectTransform[] denyMotionInObjects;
+
+    bool canMove = true;
+
     void Update()
     {
         const float mouseAngleFactor = 400f;
         Vector3 target = graph.position;
         bool isMouseDown = Input.GetMouseButton(0);
+
+        // Prevent motion if mouse down occurred in any of denyMotionInObjects
+        if (Input.GetMouseButtonDown(0))
+        {
+            canMove = true;
+            Vector3 mouseDownPos = Input.mousePosition;
+            Debug.Log("mouse : " + mouseDownPos);
+            foreach (var rt in denyMotionInObjects)
+            {
+                Vector2 pos = rt.position;
+                Vector2 size = rt.sizeDelta;
+                if (RectTransformUtility.RectangleContainsScreenPoint(rt, mouseDownPos))
+                {
+                    canMove = false;
+                    break;
+                }
+            }
+        }
+        if (!canMove)
+        {
+            return;
+        }
 
         // Swivel left/right.
         Vector3 axisLR = Vector3.up;

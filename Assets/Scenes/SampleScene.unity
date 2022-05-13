@@ -2164,6 +2164,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   graph: {fileID: 165425866}
+  denyMotionInObjects:
+  - {fileID: 86664282}
 --- !u!1 &1127160562
 GameObject:
   m_ObjectHideFlags: 0
